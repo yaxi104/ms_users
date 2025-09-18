@@ -13,7 +13,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -49,6 +53,35 @@ class UserJpaAdapterTest {
         when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(TestDataFactory.mockUserEntity()));
         User user = TestDataFactory.mockUser();
         assertThrows(UserAlreadyExistsException.class, () -> userJpaAdapter.saveUser(user));
+    }
+
+    @Test
+    void findByEmailWhenUserExistsTest() {
+        var email = "test@example.com";
+        var mockEntity = TestDataFactory.mockUserEntity();
+        var expectedUser = TestDataFactory.mockUser();
+
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(mockEntity));
+        when(userEntityMapper.toUser(mockEntity)).thenReturn(expectedUser);
+
+        Optional<User> result = userJpaAdapter.findByEmail(email);
+
+        assertTrue(result.isPresent());
+        assertEquals(expectedUser, result.get());
+        verify(userRepository).findByEmail(email);
+        verify(userEntityMapper).toUser(mockEntity);
+    }
+
+    @Test
+    void findByEmailWhenUserDoesNotExistTest() {
+        var email = "notfound@example.com";
+        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+
+        Optional<User> result = userJpaAdapter.findByEmail(email);
+
+        assertTrue(result.isEmpty());
+        verify(userRepository).findByEmail(email);
+        verify(userEntityMapper, never()).toUser(any());
     }
 
 }
