@@ -1,7 +1,7 @@
 package com.hexagonal.ms_user.infrastructure.security;
 
-import com.hexagonal.ms_user.infrastructure.output.jpa.entity.UserEntity;
-import com.hexagonal.ms_user.infrastructure.output.jpa.repository.IUserRepository;
+import com.hexagonal.ms_user.domain.model.User;
+import com.hexagonal.ms_user.domain.spi.IUserPersistencePort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,23 +18,23 @@ import static org.mockito.Mockito.when;
 
 class UserDetailServiceAdapterTest {
 
-    private IUserRepository userRepository;
+    private IUserPersistencePort userPersistencePort;
     private UserDetailServiceAdapter userDetailsService;
 
     @BeforeEach
     void setUp() {
-        userRepository = mock(IUserRepository.class);
-        userDetailsService = new UserDetailServiceAdapter(userRepository);
+        userPersistencePort = mock(IUserPersistencePort.class);
+        userDetailsService = new UserDetailServiceAdapter(userPersistencePort);
     }
 
     @Test
     void loadUserByUsernameUserFoundTest() {
-        var mockUser = new UserEntity();
+        var mockUser = new User();
         mockUser.setEmail("test@example.com");
         mockUser.setPassword("password123");
         mockUser.setRole("USER");
 
-        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(mockUser));
+        when(userPersistencePort.findByEmail("test@example.com")).thenReturn(Optional.of(mockUser));
 
         UserDetails userDetails = userDetailsService.loadUserByUsername("test@example.com");
 
@@ -47,7 +47,7 @@ class UserDetailServiceAdapterTest {
 
     @Test
     void loadUserByUsernameUserNotFoundTest() {
-        when(userRepository.findByEmail("noexiste@example.com")).thenReturn(Optional.empty());
+        when(userPersistencePort.findByEmail("noexiste@example.com")).thenReturn(Optional.empty());
         assertThrows(UsernameNotFoundException.class, () -> {
             userDetailsService.loadUserByUsername("noexiste@example.com");
         });

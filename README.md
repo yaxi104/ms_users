@@ -42,6 +42,25 @@ El microservicio realiza validaciones como:
 ## 📖 Documentación de la API (Swagger)
 http://localhost:8080/user/swagger-ui/index.html
 
+## 📄 Ejemplo de postman
+
+#### Crear Propietario
+```http
+curl --location 'http://localhost:8080/user/api/v1/owner' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Basic YWRtaW5AcGxhem9sZXRhLmNvbTpBZG1pbjEyMyE=' \
+--header 'Cookie: JSESSIONID=C6B9E1BCEF2D968B43F002304CBF9726' \
+--data-raw '{
+"firstName": "Pastini",
+"lastName": "Comelini",
+"idNumber": "5416164524545",
+"phoneNumber": "+573001356985",
+"dateBirth": "2002-01-17",
+"email": "propietariopasta@plazoleta.com",
+"password": "Propietariopasta"
+}'
+```
+
 ## 📄 Ejemplo de solicitud
 
 ```http
@@ -58,5 +77,5 @@ Authorization: Basic base64(admin:password)
   "email": "test@example.com",
   "password": "password123"
 }
-
+```
 
