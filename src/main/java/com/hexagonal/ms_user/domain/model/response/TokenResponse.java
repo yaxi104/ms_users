@@ -1,14 +1,20 @@
 package com.hexagonal.ms_user.domain.model.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@Setter
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
 public class TokenResponse {
     private String token;
+
+    public TokenResponse(String token) {
+        this.token = token;
+    }
+
+    public TokenResponse() {
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
 }
