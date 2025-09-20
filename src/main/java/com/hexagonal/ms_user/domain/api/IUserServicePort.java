@@ -10,4 +10,6 @@ public interface IUserServicePort {
     void saveUser(User user);
 
     User getUserByEmail(String email);
+
+    User getUserById(Long id);
 }

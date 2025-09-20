@@ -47,6 +47,12 @@ public class UserUseCase implements IUserServicePort {
                 .orElseThrow(UserNotFoundException::new);
     }
 
+    @Override
+    public User getUserById(Long id) {
+        return authPersistencePort.findById(id)
+                .orElseThrow(UserNotFoundException::new);
+    }
+
     private void validateUserRequest(User user) {
         ValidateRequest.checkNotBlank(user.getFirstName());
         ValidateRequest.checkNotBlank(user.getLastName());

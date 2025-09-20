@@ -21,4 +21,10 @@ public class AuthJpaAdapter implements IAuthPersistencePort {
                 .map(userEntityMapper::toUser);
     }
 
+    @Override
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id)
+                .map(userEntityMapper::toUser);
+    }
+
 }

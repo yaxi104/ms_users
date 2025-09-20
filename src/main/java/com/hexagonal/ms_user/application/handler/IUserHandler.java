@@ -12,4 +12,6 @@ public interface IUserHandler {
     void saveOwner(UserOwnerRequest userOwnerRequest);
 
     UserResponse getUserByEmail(String email);
+
+    UserResponse getUserById(Long id);
 }

@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,8 +66,8 @@ public class UserRestController {
     }
 
     @Operation(
-            summary = "Get user by ID",
-            description = "Retrieves a user by their unique ID. Accessible by users with roles ADMIN, PROPIETARIO or EMPLEADO."
+            summary = "Get user by Email",
+            description = "Retrieves a user by their unique email. Accessible by users with roles ADMIN, PROPIETARIO or EMPLEADO."
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User found"),
@@ -77,6 +78,22 @@ public class UserRestController {
     @GetMapping("/user")
     public ResponseEntity<UserResponse> getUserByEmail(@RequestParam("email") String email) {
         UserResponse user = userHandler.getUserByEmail(email);
+        return ResponseEntity.ok(user);
+    }
+
+    @Operation(
+            summary = "Get user by ID",
+            description = "Retrieves a user by their unique ID. Accessible by users with roles ADMIN, PROPIETARIO or EMPLEADO."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User found"),
+            @ApiResponse(responseCode = "403", description = "Access denied"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROPIETARIO', 'EMPLEADO')")
+    @GetMapping("/{id}")
+    public ResponseEntity<UserResponse> getUserById(@PathVariable("id") Long id) {
+        UserResponse user = userHandler.getUserById(id);
         return ResponseEntity.ok(user);
     }
 }
