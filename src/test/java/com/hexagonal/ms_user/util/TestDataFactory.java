@@ -66,6 +66,7 @@ public class TestDataFactory {
         mockResponse.setFirstName("Pepito");
         mockResponse.setLastName("Perez");
         mockResponse.setEmail("test@example.com");
+        mockResponse.setRole("ADMIN");
         return mockResponse;
     }
 

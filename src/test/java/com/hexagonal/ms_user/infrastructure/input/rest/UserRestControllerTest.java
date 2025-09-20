@@ -6,8 +6,10 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hexagonal.ms_user.application.dto.request.AuthRequest;
 import com.hexagonal.ms_user.application.dto.request.UserOwnerRequest;
 import com.hexagonal.ms_user.application.dto.response.AuthResponse;
+import com.hexagonal.ms_user.application.dto.response.UserResponse;
 import com.hexagonal.ms_user.application.handler.IUserHandler;
 import com.hexagonal.ms_user.domain.exception.UserAlreadyExistsException;
+import com.hexagonal.ms_user.domain.exception.UserNotFoundException;
 import com.hexagonal.ms_user.infrastructure.exception.UserForbiddenException;
 import com.hexagonal.ms_user.infrastructure.exceptionhandler.ControllerAdvisor;
 import com.hexagonal.ms_user.util.TestDataFactory;
@@ -26,6 +28,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -109,4 +112,57 @@ class UserRestControllerTest {
                 .andExpect(status().isForbidden());
     }
 
+    @Test
+    void getUserByEmailSuccessTest() throws Exception {
+        String email = "test@example.com";
+        UserResponse mockResponse = TestDataFactory.mockUserResponse();
+
+        when(userHandler.getUserByEmail(email)).thenReturn(mockResponse);
+
+        mockMvc.perform(get("/api/v1/user")
+                        .with(authentication(SecurityContextHolder.getContext().getAuthentication()))
+                        .param("email", email))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.email").value(email))
+                .andExpect(jsonPath("$.role").value("ADMIN"));
+    }
+
+    @Test
+    void getUserByEmailNotFoundTest() throws Exception {
+        String email = "notfound@example.com";
+
+        when(userHandler.getUserByEmail(email)).thenThrow(new UserNotFoundException());
+
+        mockMvc.perform(get("/user")
+                        .with(authentication(SecurityContextHolder.getContext().getAuthentication()))
+                        .param("email", email))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getUserByIdSuccessTest() throws Exception {
+        Long userId = 1L;
+        UserResponse mockResponse = TestDataFactory.mockUserResponse();
+
+        when(userHandler.getUserById(userId)).thenReturn(mockResponse);
+
+        mockMvc.perform(get("/api/v1/" + userId)
+                        .with(authentication(SecurityContextHolder.getContext().getAuthentication())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(userId))
+                .andExpect(jsonPath("$.email").value("test@example.com"))
+                .andExpect(jsonPath("$.role").value("ADMIN"));
+    }
+
+    @Test
+    void getUserByIdNotFoundTest() throws Exception {
+        Long userId = 999L;
+
+        when(userHandler.getUserById(userId)).thenThrow(new UserNotFoundException());
+
+        mockMvc.perform(get("/" + userId)
+                        .with(authentication(SecurityContextHolder.getContext().getAuthentication())))
+                .andExpect(status().isNotFound());
+    }
 }

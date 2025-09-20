@@ -2,63 +2,68 @@ package com.hexagonal.ms_user.domain.utils;
 
 import com.hexagonal.ms_user.domain.exception.BadRequestException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.LocalDate;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ValidateUserRequestTest {
 
     @Test
-    void checkNotBlank_ValidValue_DoesNotThrow() {
-        assertDoesNotThrow(() -> ValidateRequest.checkNotBlank("valor"));
+    void checkNotBlankValidValueDoesNotThrow() {
+        assertDoesNotThrow(() -> ValidateRequest.checkNotBlank("value"));
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void checkNotBlankNullThrowsBadRequestException(String arg) {
+        assertThrows(BadRequestException.class, () -> ValidateRequest.checkNotBlank(arg));
     }
 
     @Test
-    void checkNotBlank_Null_ThrowsBadRequestException() {
-        assertThrows(BadRequestException.class, () -> ValidateRequest.checkNotBlank(null));
-    }
-
-    @Test
-    void checkNotBlank_Blank_ThrowsBadRequestException() {
-        assertThrows(BadRequestException.class, () -> ValidateRequest.checkNotBlank("   "));
-    }
-
-    @Test
-    void checkPattern_ValidValue_DoesNotThrow() {
-        String value = "12345";
+    void checkPatternwithValidAndInvalidValuesbehavesAsExpected() {
+        String validValue = "12345";
+        String invalidValue = "abc123";
         String pattern = "\\d+";
-        assertDoesNotThrow(() -> ValidateRequest.checkPattern(value, pattern));
+
+        assertAll(
+                () -> assertDoesNotThrow(() -> ValidateRequest.checkPattern(validValue, pattern), "Valid value should not throw"),
+                () -> assertThrows(BadRequestException.class, () -> ValidateRequest.checkPattern(invalidValue, pattern), "Invalid value should throw BadRequestException")
+        );
     }
 
     @Test
-    void checkPattern_InvalidValue_ThrowsBadRequestException() {
-        String value = "abc123";
-        String pattern = "\\d+";
-        assertThrows(BadRequestException.class, () -> ValidateRequest.checkPattern(value, pattern));
-    }
-
-    @Test
-    void checkPastDate_ValidPastDate_DoesNotThrow() {
+    void checkPastDateValidPastDateDoesNotThrow() {
         LocalDate date = LocalDate.now().minusYears(20);
         assertDoesNotThrow(() -> ValidateRequest.checkPastDate(date));
     }
 
     @Test
-    void checkPastDate_Null_ThrowsBadRequestException() {
+    void checkPastDateNullThrowsBadRequestException() {
         assertThrows(BadRequestException.class, () -> ValidateRequest.checkPastDate(null));
     }
 
     @Test
-    void checkPastDate_Today_ThrowsBadRequestException() {
+    void checkPastDatewithInvalidDatesshouldThrowBadRequestException() {
         LocalDate today = LocalDate.now();
-        assertThrows(BadRequestException.class, () -> ValidateRequest.checkPastDate(today));
+        LocalDate underageBirthDate = LocalDate.now().minusYears(10);
+
+        assertAll(
+                () -> assertThrows(BadRequestException.class, () -> ValidateRequest.checkPastDate(today)),
+                () -> assertThrows(BadRequestException.class, () -> ValidateRequest.checkPastDate(underageBirthDate))
+        );
     }
 
-    @Test
-    void checkPastDate_LessThanRequiredAge_ThrowsBadRequestException() {
-        LocalDate recentBirth = LocalDate.now().minusYears(10); // supongamos que MAX_AGE = 18
-        assertThrows(BadRequestException.class, () -> ValidateRequest.checkPastDate(recentBirth));
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"122321515665155651", "2124*"})
+    void checkNumberPhoneThrowsBadRequestException(String arg) {
+        assertThrows(BadRequestException.class, () -> ValidateRequest.checkNumberPhone(arg));
     }
+
 }

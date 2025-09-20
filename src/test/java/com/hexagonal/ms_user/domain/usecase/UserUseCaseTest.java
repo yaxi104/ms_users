@@ -2,6 +2,7 @@ package com.hexagonal.ms_user.domain.usecase;
 
 import com.hexagonal.ms_user.domain.exception.BadRequestException;
 import com.hexagonal.ms_user.domain.exception.UserAlreadyExistsException;
+import com.hexagonal.ms_user.domain.exception.UserNotFoundException;
 import com.hexagonal.ms_user.domain.model.request.User;
 import com.hexagonal.ms_user.domain.model.response.TokenResponse;
 import com.hexagonal.ms_user.domain.spi.IAuthPersistencePort;
@@ -19,6 +20,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -123,4 +125,49 @@ class UserUseCaseTest {
         assertThrows(BadRequestException.class, () -> userUseCase.authUser(user));
     }
 
+    @Test
+    void getUserByEmailSuccesTest() {
+        String email = "test@example.com";
+        User mockUser = TestDataFactory.mockUser();
+
+        when(authPersistencePort.findByEmail(email)).thenReturn(Optional.of(mockUser));
+
+        User result = userUseCase.getUserByEmail(email);
+
+        assertNotNull(result);
+        assertEquals(email, result.getEmail());
+        verify(authPersistencePort).findByEmail(email);
+    }
+
+    @Test
+    void getUserByEmailNotExistTest() {
+        String email = "notfound@example.com";
+        when(authPersistencePort.findByEmail(email)).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> userUseCase.getUserByEmail(email));
+        verify(authPersistencePort).findByEmail(email);
+    }
+
+    @Test
+    void getUserByIdSuccessTest() {
+        Long userId = 1L;
+        User mockUser = TestDataFactory.mockUser();
+
+        when(authPersistencePort.findById(userId)).thenReturn(Optional.of(mockUser));
+
+        User result = userUseCase.getUserById(userId);
+
+        assertNotNull(result);
+        assertEquals(userId, result.getId());
+        verify(authPersistencePort).findById(userId);
+    }
+
+    @Test
+    void getUserById_shouldThrowException_whenUserDoesNotExist() {
+        Long userId = 999L;
+        when(authPersistencePort.findById(userId)).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> userUseCase.getUserById(userId));
+        verify(authPersistencePort).findById(userId);
+    }
 }

@@ -1,6 +1,7 @@
 package com.hexagonal.ms_user.infrastructure.output.jpa.adapter;
 
 import com.hexagonal.ms_user.domain.model.request.User;
+import com.hexagonal.ms_user.infrastructure.output.jpa.entity.UserEntity;
 import com.hexagonal.ms_user.infrastructure.output.jpa.mapper.IUserEntityMapper;
 import com.hexagonal.ms_user.infrastructure.output.jpa.repository.IUserRepository;
 import com.hexagonal.ms_user.util.TestDataFactory;
@@ -32,9 +33,9 @@ class AuthJpaAdapterTest {
 
     @Test
     void findByEmailWhenUserExistsTest() {
-        var email = "test@example.com";
-        var mockEntity = TestDataFactory.mockUserEntity();
-        var expectedUser = TestDataFactory.mockUser();
+        String email = "test@example.com";
+        UserEntity mockEntity = TestDataFactory.mockUserEntity();
+        User expectedUser = TestDataFactory.mockUser();
 
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(mockEntity));
         when(userEntityMapper.toUser(mockEntity)).thenReturn(expectedUser);
@@ -49,13 +50,42 @@ class AuthJpaAdapterTest {
 
     @Test
     void findByEmailWhenUserDoesNotExistTest() {
-        var email = "notfound@example.com";
+        String email = "notfound@example.com";
         when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
 
         Optional<User> result = authJpaAdapter.findByEmail(email);
 
         assertTrue(result.isEmpty());
         verify(userRepository).findByEmail(email);
+        verify(userEntityMapper, never()).toUser(any());
+    }
+
+    @Test
+    void findByIdWhenUserExistsTest() {
+        Long id = 1L;
+        UserEntity mockEntity = TestDataFactory.mockUserEntity();
+        User expectedUser = TestDataFactory.mockUser();
+
+        when(userRepository.findById(id)).thenReturn(Optional.of(mockEntity));
+        when(userEntityMapper.toUser(mockEntity)).thenReturn(expectedUser);
+
+        Optional<User> result = authJpaAdapter.findById(id);
+
+        assertTrue(result.isPresent());
+        assertEquals(expectedUser, result.get());
+        verify(userRepository).findById(id);
+        verify(userEntityMapper).toUser(mockEntity);
+    }
+
+    @Test
+    void findByIdWhenUserDoesNotExistTest() {
+        Long id = 2L;
+        when(userRepository.findById(id)).thenReturn(Optional.empty());
+
+        Optional<User> result = authJpaAdapter.findById(id);
+
+        assertTrue(result.isEmpty());
+        verify(userRepository).findById(id);
         verify(userEntityMapper, never()).toUser(any());
     }
 }
