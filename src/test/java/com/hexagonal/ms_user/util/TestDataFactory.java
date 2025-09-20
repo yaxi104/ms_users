@@ -1,7 +1,10 @@
 package com.hexagonal.ms_user.util;
 
-import com.hexagonal.ms_user.application.dto.request.UserRequest;
-import com.hexagonal.ms_user.domain.model.User;
+import com.hexagonal.ms_user.application.dto.request.AuthRequest;
+import com.hexagonal.ms_user.application.dto.request.UserOwnerRequest;
+import com.hexagonal.ms_user.application.dto.response.UserResponse;
+import com.hexagonal.ms_user.domain.model.request.User;
+import com.hexagonal.ms_user.domain.model.response.TokenResponse;
 import com.hexagonal.ms_user.infrastructure.output.jpa.entity.UserEntity;
 
 import java.time.LocalDate;
@@ -11,8 +14,8 @@ public class TestDataFactory {
     private TestDataFactory() {
     }
 
-    public static UserRequest mockUserRequest() {
-        UserRequest userRequest = new UserRequest();
+    public static UserOwnerRequest mockOwnerRequest() {
+        UserOwnerRequest userRequest = new UserOwnerRequest();
         userRequest.setFirstName("Pepito");
         userRequest.setLastName("Perez");
         userRequest.setIdNumber("1234");
@@ -25,6 +28,7 @@ public class TestDataFactory {
 
     public static User mockUser() {
         User user = new User();
+        user.setId(1L);
         user.setFirstName("Pepito");
         user.setLastName("Perez");
         user.setIdNumber("1234");
@@ -48,4 +52,28 @@ public class TestDataFactory {
         mockUserEntity.setRole("PROPIETARIO");
         return mockUserEntity;
     }
+
+    public static AuthRequest mockAuthequest() {
+        AuthRequest authRequest = new AuthRequest();
+        authRequest.setEmail("test@example.com");
+        authRequest.setPassword("password123");
+        return authRequest;
+    }
+
+    public static UserResponse mockUserResponse() {
+        UserResponse mockResponse = new UserResponse();
+        mockResponse.setId(1L);
+        mockResponse.setFirstName("Pepito");
+        mockResponse.setLastName("Perez");
+        mockResponse.setEmail("test@example.com");
+        return mockResponse;
+    }
+
+    public static TokenResponse mockTokenResponse() {
+        TokenResponse mockResponse = new TokenResponse();
+        mockResponse.setToken("1L");
+        return mockResponse;
+    }
+
+
 }

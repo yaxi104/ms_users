@@ -1,32 +1,126 @@
 package com.hexagonal.ms_user.domain.usecase;
 
+import com.hexagonal.ms_user.domain.exception.BadRequestException;
+import com.hexagonal.ms_user.domain.exception.UserAlreadyExistsException;
+import com.hexagonal.ms_user.domain.model.request.User;
+import com.hexagonal.ms_user.domain.model.response.TokenResponse;
+import com.hexagonal.ms_user.domain.spi.IAuthPersistencePort;
+import com.hexagonal.ms_user.domain.spi.IAuthTokenResponsePort;
+import com.hexagonal.ms_user.domain.spi.IPasswordEncodePort;
 import com.hexagonal.ms_user.domain.spi.IUserPersistencePort;
 import com.hexagonal.ms_user.util.TestDataFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UserUseCaseTest {
 
-    @InjectMocks
+    private IUserPersistencePort userPersistencePort;
+    private IAuthPersistencePort authPersistencePort;
+    private IPasswordEncodePort passwordEncodePort;
+    private IAuthTokenResponsePort authTokenResponsePort;
+
     private UserUseCase userUseCase;
 
-    @Mock
-    private IUserPersistencePort userPersistencePort;
+    @BeforeEach
+    void setUp() {
+        userPersistencePort = mock(IUserPersistencePort.class);
+        authPersistencePort = mock(IAuthPersistencePort.class);
+        passwordEncodePort = mock(IPasswordEncodePort.class);
+        authTokenResponsePort = mock(IAuthTokenResponsePort.class);
+
+        userUseCase = new UserUseCase(
+                userPersistencePort,
+                authPersistencePort,
+                passwordEncodePort,
+                authTokenResponsePort
+        );
+    }
 
     @Test
     void saveUserSuccessTest() {
-        var mockUser = TestDataFactory.mockUser();
+        User user = TestDataFactory.mockUser();
+        when(authPersistencePort.findByEmail(user.getEmail())).thenReturn(Optional.empty());
+        when(passwordEncodePort.encodePassword(user.getPassword())).thenReturn("encodedPassword");
 
-        userUseCase.saveUser(mockUser);
+        userUseCase.saveUser(user);
 
-        verify(userPersistencePort, times(1)).saveUser(mockUser);
-
+        verify(userPersistencePort, times(1)).saveUser(user);
+        assertEquals("encodedPassword", user.getPassword());
     }
+
+    @Test
+    void saveUserFailExistsTest() {
+        User user = TestDataFactory.mockUser();
+        when(authPersistencePort.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+
+        assertThrows(UserAlreadyExistsException.class, () -> userUseCase.saveUser(user));
+        verify(userPersistencePort, Mockito.never()).saveUser(any());
+    }
+
+    @Test
+    void saveUserFailInvalidEmailTest() {
+        User user = TestDataFactory.mockUser();
+        user.setEmail("correo-invalido");
+
+        assertThrows(BadRequestException.class, () -> userUseCase.saveUser(user));
+    }
+
+    @Test
+    void saveUserFailFutureBirthDateTest() {
+        User user = TestDataFactory.mockUser();
+        user.setDateBirth(LocalDate.now().plusDays(5));
+
+        assertThrows(BadRequestException.class, () -> userUseCase.saveUser(user));
+    }
+
+    @Test
+    void saveUserFailPhonePatternTest() {
+        User user = TestDataFactory.mockUser();
+        user.setPhoneNumber("abc123");
+
+        assertThrows(BadRequestException.class, () -> userUseCase.saveUser(user));
+    }
+
+    @Test
+    void authUserSuccessTest() {
+        User user = TestDataFactory.mockUser();
+        TokenResponse expected = new TokenResponse("jwt.token");
+        when(authTokenResponsePort.getToken(user)).thenReturn(expected);
+
+        TokenResponse actual = userUseCase.authUser(user);
+
+        assertEquals(expected.getToken(), actual.getToken());
+    }
+
+    @Test
+    void authUserFailMissingEmailTest() {
+        User user = TestDataFactory.mockUser();
+        user.setEmail(null);
+
+        assertThrows(BadRequestException.class, () -> userUseCase.authUser(user));
+    }
+
+    @Test
+    void authUserFailMissingPasswordTest() {
+        User user = TestDataFactory.mockUser();
+        user.setPassword("   ");
+
+        assertThrows(BadRequestException.class, () -> userUseCase.authUser(user));
+    }
+
 }

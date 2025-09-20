@@ -40,7 +40,7 @@ El microservicio realiza validaciones como:
 
 ---
 ## 📖 Documentación de la API (Swagger)
-http://localhost:8080/user/swagger-ui/index.html
+http://localhost:8080/food-court/users/swagger-ui/index.html
 
 ## 📄 Ejemplo de postman
 

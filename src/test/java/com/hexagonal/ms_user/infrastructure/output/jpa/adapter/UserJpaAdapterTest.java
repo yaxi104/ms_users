@@ -1,7 +1,5 @@
 package com.hexagonal.ms_user.infrastructure.output.jpa.adapter;
 
-import com.hexagonal.ms_user.domain.model.User;
-import com.hexagonal.ms_user.infrastructure.exception.UserAlreadyExistsException;
 import com.hexagonal.ms_user.infrastructure.output.jpa.mapper.IUserEntityMapper;
 import com.hexagonal.ms_user.infrastructure.output.jpa.repository.IUserRepository;
 import com.hexagonal.ms_user.util.TestDataFactory;
@@ -11,13 +9,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -38,50 +29,9 @@ class UserJpaAdapterTest {
     void saveUserSuccessTest() {
         var mockEntity = TestDataFactory.mockUserEntity();
         var mockUser = TestDataFactory.mockUser();
-
-        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.empty());
         when(userEntityMapper.toEntity(mockUser)).thenReturn(mockEntity);
-
         userJpaAdapter.saveUser(mockUser);
-
         verify(userRepository).save(mockEntity);
-
-    }
-
-    @Test
-    void saveUserExistsTest() {
-        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(TestDataFactory.mockUserEntity()));
-        User user = TestDataFactory.mockUser();
-        assertThrows(UserAlreadyExistsException.class, () -> userJpaAdapter.saveUser(user));
-    }
-
-    @Test
-    void findByEmailWhenUserExistsTest() {
-        var email = "test@example.com";
-        var mockEntity = TestDataFactory.mockUserEntity();
-        var expectedUser = TestDataFactory.mockUser();
-
-        when(userRepository.findByEmail(email)).thenReturn(Optional.of(mockEntity));
-        when(userEntityMapper.toUser(mockEntity)).thenReturn(expectedUser);
-
-        Optional<User> result = userJpaAdapter.findByEmail(email);
-
-        assertTrue(result.isPresent());
-        assertEquals(expectedUser, result.get());
-        verify(userRepository).findByEmail(email);
-        verify(userEntityMapper).toUser(mockEntity);
-    }
-
-    @Test
-    void findByEmailWhenUserDoesNotExistTest() {
-        var email = "notfound@example.com";
-        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
-
-        Optional<User> result = userJpaAdapter.findByEmail(email);
-
-        assertTrue(result.isEmpty());
-        verify(userRepository).findByEmail(email);
-        verify(userEntityMapper, never()).toUser(any());
     }
 
 }

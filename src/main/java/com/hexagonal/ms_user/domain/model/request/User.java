@@ -1,4 +1,4 @@
-package com.hexagonal.ms_user.domain.model;
+package com.hexagonal.ms_user.domain.model.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

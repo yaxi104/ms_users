@@ -1,4 +1,4 @@
-package com.hexagonal.ms_user.infrastructure.exception;
+package com.hexagonal.ms_user.domain.exception;
 
 public class UserNotOlderAgeException extends RuntimeException {
 

@@ -1,17 +1,18 @@
 package com.hexagonal.ms_user.application.handler.impl;
 
-import com.hexagonal.ms_user.application.dto.request.UserRequest;
+import com.hexagonal.ms_user.application.dto.request.AuthRequest;
+import com.hexagonal.ms_user.application.dto.request.UserOwnerRequest;
+import com.hexagonal.ms_user.application.dto.response.AuthResponse;
+import com.hexagonal.ms_user.application.dto.response.UserResponse;
 import com.hexagonal.ms_user.application.handler.IUserHandler;
-import com.hexagonal.ms_user.application.mapper.IUserRequestMapper;
+import com.hexagonal.ms_user.application.mapper.IAuthMapper;
+import com.hexagonal.ms_user.application.mapper.IOwnerMapper;
+import com.hexagonal.ms_user.application.mapper.IUserMapper;
 import com.hexagonal.ms_user.domain.api.IUserServicePort;
-import com.hexagonal.ms_user.infrastructure.exception.UserNotOlderAgeException;
+import com.hexagonal.ms_user.domain.model.response.TokenResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.time.Period;
 
 @Service
 @RequiredArgsConstructor
@@ -19,21 +20,23 @@ import java.time.Period;
 public class UserHandler implements IUserHandler {
 
     private final IUserServicePort userServicePort;
-    private final IUserRequestMapper userRequestMapper;
-    private final PasswordEncoder passwordEncoder;
+    private final IOwnerMapper ownerMapper;
+    private final IAuthMapper authMapper;
+    private final IUserMapper userMapper;
 
     @Override
-    public void saveUser(UserRequest userRequest) {
-        validateOlderAge(userRequest.getDateBirth());
-        var user = userRequestMapper.toUser(userRequest);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole("PROPIETARIO");
-        userServicePort.saveUser(user);
+    public AuthResponse authUser(AuthRequest authRequest) {
+        TokenResponse tokenResponse = userServicePort.authUser(authMapper.toUser(authRequest));
+        return authMapper.toAuthResponse(tokenResponse);
     }
 
-    private void validateOlderAge(LocalDate birthDate) {
-        if (Period.between(birthDate, LocalDate.now()).getYears() < 18) {
-            throw new UserNotOlderAgeException();
-        }
+    @Override
+    public void saveOwner(UserOwnerRequest userOwnerRequest) {
+        userServicePort.saveUser(ownerMapper.toOwner(userOwnerRequest));
+    }
+
+    @Override
+    public UserResponse getUserByEmail(String email) {
+        return userMapper.toResponse(userServicePort.getUserByEmail(email));
     }
 }

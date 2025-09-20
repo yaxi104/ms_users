@@ -1,35 +1,35 @@
 package com.hexagonal.ms_user.infrastructure.configuration;
 
+import com.hexagonal.ms_user.infrastructure.security.CustomAccessDenied;
+import com.hexagonal.ms_user.infrastructure.security.jwt.JwtFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
-import java.io.PrintWriter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final UserDetailsService userDetailsService;
+    private final JwtFilter jwtFilter;
+    private final CustomAccessDenied accessDeniedHandler;
 
-    public SecurityConfig(UserDetailsService uds) {
-        this.userDetailsService = uds;
+    public SecurityConfig(@Lazy JwtFilter jwtFilter, CustomAccessDenied accessDeniedHandler) {
+        this.jwtFilter = jwtFilter;
+        this.accessDeniedHandler = accessDeniedHandler;
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
@@ -43,38 +43,18 @@ public class SecurityConfig {
                                 "/favicon.ico",
                                 "/swagger-ui/index.html"
                         ).permitAll()
-                        .requestMatchers("/user/api/v1/owner").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/owner").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/{id}")
+                        .hasAnyRole("ADMIN", "PROPIETARIO", "EMPLEADO")
                         .anyRequest().authenticated()
                 )
-                .httpBasic(httpBasic -> {
-                })
                 .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint((request, response, authException) -> {
-                            response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                            response.setContentType("application/json");
-                            PrintWriter writer = response.getWriter();
-                            writer.write("{\"error\": \"Unauthorized access\"}");
-                            writer.flush();
-                        })
-                        .accessDeniedHandler((request, response, accessDeniedException) -> {
-                            response.setStatus(HttpStatus.FORBIDDEN.value());
-                            response.setContentType("application/json");
-                            PrintWriter writer = response.getWriter();
-                            writer.write("{\"error\": \"Access denied\"}");
-                            writer.flush();
-                        })
-                );
-
-        return http.build();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder authBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-        authBuilder
-                .userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder());
-        return authBuilder.build();
+                        .accessDeniedHandler(accessDeniedHandler)
+                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
 
     @Bean
