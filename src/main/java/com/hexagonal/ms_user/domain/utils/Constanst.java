@@ -14,8 +14,8 @@ public class Constanst {
     public static final String PATTERN_ONLY_UPPERCASE = "^[A-Z]+$";
 
     /* ROLE */
-    public static final String ADMIN = "ADMIN";
-    public static final String PROPIETARIO = "PROPIETARIO";
-    public static final String EMPLEADO = "EMPLEADO";
-    public static final String CLIENTE = "CLIENTE";
+    public static final String ROLE_ADMIN = "ADMIN";
+    public static final String ROLE_PROPIETARIO = "PROPIETARIO";
+    public static final String ROLE_EMPLEADO = "EMPLEADO";
+    public static final String ROLE_CLIENTE = "CLIENTE";
 }

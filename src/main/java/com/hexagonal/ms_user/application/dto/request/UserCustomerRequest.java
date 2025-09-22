@@ -9,14 +9,14 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserEmployeeRequest {
+public class UserCustomerRequest {
 
     @NotBlank
-    @Schema(description = "Nombre del empleado", example = "Carlos")
+    @Schema(description = "Nombre del cliente", example = "Carlos")
     private String firstName;
 
     @NotBlank
-    @Schema(description = "Apellido del empleado", example = "Pérez")
+    @Schema(description = "Apellido del cliente", example = "Pérez")
     private String lastName;
 
     @NotBlank

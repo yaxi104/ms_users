@@ -11,7 +11,7 @@ import com.hexagonal.ms_user.infrastructure.output.jpa.user.entity.UserEntity;
 
 import java.time.LocalDate;
 
-import static com.hexagonal.ms_user.domain.utils.Constanst.PROPIETARIO;
+import static com.hexagonal.ms_user.domain.utils.Constanst.ROLE_PROPIETARIO;
 
 public class TestDataFactory {
 
@@ -83,7 +83,7 @@ public class TestDataFactory {
     public static Role mockRole() {
         Role mockRole = new Role();
         mockRole.setId(1L);
-        mockRole.setName(PROPIETARIO);
+        mockRole.setName(ROLE_PROPIETARIO);
         mockRole.setDescription("mockDescription");
         return mockRole;
     }
@@ -91,7 +91,7 @@ public class TestDataFactory {
     public static UserAuth mockUserAuth() {
         UserAuth userAuth = new UserAuth();
         userAuth.setId(1L);
-        userAuth.setRole(PROPIETARIO);
+        userAuth.setRole(ROLE_PROPIETARIO);
         userAuth.setEmail("test@example.com");
         userAuth.setPassword("password123");
         return userAuth;

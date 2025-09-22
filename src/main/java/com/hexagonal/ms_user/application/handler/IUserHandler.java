@@ -1,6 +1,7 @@
 package com.hexagonal.ms_user.application.handler;
 
 import com.hexagonal.ms_user.application.dto.request.AuthRequest;
+import com.hexagonal.ms_user.application.dto.request.UserCustomerRequest;
 import com.hexagonal.ms_user.application.dto.request.UserEmployeeRequest;
 import com.hexagonal.ms_user.application.dto.request.UserOwnerRequest;
 import com.hexagonal.ms_user.application.dto.response.AuthResponse;
@@ -21,5 +22,6 @@ public interface IUserHandler {
 
     void saveEmployee(UserEmployeeRequest userEmployeeRequest);
 
+    void saveCustomer(UserCustomerRequest userCustomerRequest);
 
 }

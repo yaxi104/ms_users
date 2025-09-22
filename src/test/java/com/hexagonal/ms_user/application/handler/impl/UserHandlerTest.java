@@ -1,11 +1,13 @@
 package com.hexagonal.ms_user.application.handler.impl;
 
 import com.hexagonal.ms_user.application.dto.request.AuthRequest;
+import com.hexagonal.ms_user.application.dto.request.UserCustomerRequest;
 import com.hexagonal.ms_user.application.dto.request.UserEmployeeRequest;
 import com.hexagonal.ms_user.application.dto.request.UserOwnerRequest;
 import com.hexagonal.ms_user.application.dto.response.UserAuthResponse;
 import com.hexagonal.ms_user.application.dto.response.UserResponse;
 import com.hexagonal.ms_user.application.mapper.IAuthMapper;
+import com.hexagonal.ms_user.application.mapper.ICustomerMapper;
 import com.hexagonal.ms_user.application.mapper.IEmployeeMapper;
 import com.hexagonal.ms_user.application.mapper.IOwnerMapper;
 import com.hexagonal.ms_user.application.mapper.IUserMapper;
@@ -43,6 +45,9 @@ class UserHandlerTest {
 
     @Mock
     private IEmployeeMapper employeeMapper;
+
+    @Mock
+    private ICustomerMapper customerMapper;
 
     @Test
     void authUserSuccessTest() {
@@ -116,6 +121,14 @@ class UserHandlerTest {
         userHandler.saveEmployee(userEmployeeRequest);
 
         verify(employeeMapper).toEmployee(userEmployeeRequest);
+    }
+
+    @Test
+    void saveCustomerSuccessTest() {
+        UserCustomerRequest userCustomerRequest = new UserCustomerRequest();
+        userHandler.saveCustomer(userCustomerRequest);
+
+        verify(customerMapper).toCustomer(userCustomerRequest);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.hexagonal.ms_user.infrastructure.input.rest;
 
 import com.hexagonal.ms_user.application.dto.request.AuthRequest;
+import com.hexagonal.ms_user.application.dto.request.UserCustomerRequest;
 import com.hexagonal.ms_user.application.dto.request.UserEmployeeRequest;
 import com.hexagonal.ms_user.application.dto.request.UserOwnerRequest;
 import com.hexagonal.ms_user.application.dto.response.AuthResponse;
@@ -424,4 +425,59 @@ public class UserRestController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @Operation(
+            summary = "Create customer user",
+            description = "Creates a new user with CLIENTE role.",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "User created"),
+                    @ApiResponse(
+                            responseCode = "400", description = "Invalid request",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Bad Request Example",
+                                            value = """
+                                                    {
+                                                        "Message": "The request contains invalid data. Please check the submitted fields and try again"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "403", description = "Not access",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Fordibben Example",
+                                            value = """
+                                                    {
+                                                        "Message": "You do not have permission to access this resource"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "409", description = "Conflict",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Conflict Example",
+                                            value = """
+                                                    {
+                                                        "Message": "User already exists"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    )
+            }
+    )
+    @PostMapping("/customer")
+    public ResponseEntity<Void> saveCustomer(@RequestBody UserCustomerRequest userCustomerRequest) {
+        userHandler.saveCustomer(userCustomerRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 }

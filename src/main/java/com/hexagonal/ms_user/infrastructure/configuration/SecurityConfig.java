@@ -15,8 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static com.hexagonal.ms_user.domain.utils.Constanst.ADMIN;
-import static com.hexagonal.ms_user.domain.utils.Constanst.PROPIETARIO;
+import static com.hexagonal.ms_user.domain.utils.Constanst.ROLE_ADMIN;
+import static com.hexagonal.ms_user.domain.utils.Constanst.ROLE_PROPIETARIO;
 
 @Configuration
 @EnableMethodSecurity
@@ -47,13 +47,14 @@ public class SecurityConfig {
                                 "/swagger-ui/index.html"
                         ).permitAll()
                         .requestMatchers("/api/v1/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/owner").hasRole(ADMIN)
+                        .requestMatchers(HttpMethod.POST, "/api/v1/owner").hasRole(ROLE_ADMIN)
                         .requestMatchers(HttpMethod.GET, "/api/v1/user**")
-                        .hasAnyRole(ADMIN, "PROPIETARIO", "EMPLEADO")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/role/foodcourt").hasRole(ADMIN)
+                        .hasAnyRole(ROLE_ADMIN, "PROPIETARIO", "EMPLEADO")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/role/foodcourt").hasRole(ROLE_ADMIN)
                         .requestMatchers(HttpMethod.GET, "/api/v1/role/foodcourt**")
-                        .hasAnyRole(ADMIN, "PROPIETARIO", "EMPLEADO")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/employee").hasRole(PROPIETARIO)
+                        .hasAnyRole(ROLE_ADMIN, "PROPIETARIO", "EMPLEADO")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/employee").hasRole(ROLE_PROPIETARIO)
+                        .requestMatchers("/api/v1/customer").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex

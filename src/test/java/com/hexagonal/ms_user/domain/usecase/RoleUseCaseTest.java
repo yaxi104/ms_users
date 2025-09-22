@@ -13,7 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static com.hexagonal.ms_user.domain.utils.Constanst.PROPIETARIO;
+import static com.hexagonal.ms_user.domain.utils.Constanst.ROLE_PROPIETARIO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -39,7 +39,7 @@ class RoleUseCaseTest {
     @Test
     void saveRoleSuccessTest() {
         Role role = TestDataFactory.mockRole();
-        when(rolePersistencePort.getRolByName(PROPIETARIO)).thenReturn(Optional.empty());
+        when(rolePersistencePort.getRolByName(ROLE_PROPIETARIO)).thenReturn(Optional.empty());
         roleUseCase.saveRole(role);
 
         verify(rolePersistencePort, times(1)).saveRole(role);
@@ -48,7 +48,7 @@ class RoleUseCaseTest {
     @Test
     void saveRoleFailExistsTest() {
         Role role = TestDataFactory.mockRole();
-        when(rolePersistencePort.getRolByName(PROPIETARIO)).thenReturn(Optional.of(TestDataFactory.mockRole()));
+        when(rolePersistencePort.getRolByName(ROLE_PROPIETARIO)).thenReturn(Optional.of(TestDataFactory.mockRole()));
 
         assertThrows(RoleAlreadyExistsException.class, () -> roleUseCase.saveRole(role));
         verify(rolePersistencePort, Mockito.never()).saveRole(any());
@@ -80,7 +80,7 @@ class RoleUseCaseTest {
 
     @Test
     void getRoleByNameSuccesTest() {
-        String name = PROPIETARIO;
+        String name = ROLE_PROPIETARIO;
         Role mockRole = TestDataFactory.mockRole();
 
         when(rolePersistencePort.getRolByName(name)).thenReturn(Optional.of(mockRole));

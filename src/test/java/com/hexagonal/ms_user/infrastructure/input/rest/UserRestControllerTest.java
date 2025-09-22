@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hexagonal.ms_user.application.dto.request.AuthRequest;
+import com.hexagonal.ms_user.application.dto.request.UserCustomerRequest;
 import com.hexagonal.ms_user.application.dto.request.UserEmployeeRequest;
 import com.hexagonal.ms_user.application.dto.request.UserOwnerRequest;
 import com.hexagonal.ms_user.application.dto.response.AuthResponse;
@@ -41,6 +42,7 @@ class UserRestControllerTest {
     private IUserHandler userHandler;
     private JacksonTester<UserOwnerRequest> jsonUserOwnerRequest;
     private JacksonTester<UserEmployeeRequest> jsonUserEmployeeRequest;
+    private JacksonTester<UserCustomerRequest> jsonUserCustomerRequest;
 
     @BeforeEach
     void setUp() {
@@ -194,4 +196,16 @@ class UserRestControllerTest {
         verify(userHandler).saveEmployee(any(UserEmployeeRequest.class));
     }
 
+    @Test
+    void saveCustomerSuccessTest() throws Exception {
+        UserCustomerRequest userCustomerRequest = new UserCustomerRequest();
+
+        mockMvc.perform(post("/api/v1/customer")
+                        .with(authentication(SecurityContextHolder.getContext().getAuthentication()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonUserCustomerRequest.write(userCustomerRequest).getJson()))
+                .andExpect(status().isCreated());
+
+        verify(userHandler).saveCustomer(any(UserCustomerRequest.class));
+    }
 }

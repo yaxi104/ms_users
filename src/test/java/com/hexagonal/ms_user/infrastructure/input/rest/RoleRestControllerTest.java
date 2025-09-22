@@ -16,7 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static com.hexagonal.ms_user.domain.utils.Constanst.PROPIETARIO;
+import static com.hexagonal.ms_user.domain.utils.Constanst.ROLE_PROPIETARIO;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -67,7 +67,7 @@ class RoleRestControllerTest {
 
     @Test
     void getRoleByNameSuccessTest() throws Exception {
-        String name = PROPIETARIO;
+        String name = ROLE_PROPIETARIO;
         RoleResponse mockResponse = new RoleResponse();
         mockResponse.setId(1L);
 

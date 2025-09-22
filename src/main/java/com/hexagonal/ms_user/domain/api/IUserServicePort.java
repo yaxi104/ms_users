@@ -17,4 +17,6 @@ public interface IUserServicePort {
     UserAuth getUserByIdAuth(Long id);
 
     void saveEmployee(User user);
+
+    void saveCustomer(User user);
 }

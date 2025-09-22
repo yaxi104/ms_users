@@ -13,7 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static com.hexagonal.ms_user.domain.utils.Constanst.PROPIETARIO;
+import static com.hexagonal.ms_user.domain.utils.Constanst.ROLE_PROPIETARIO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
@@ -60,7 +60,7 @@ class RoleJpaAdapterTest {
 
     @Test
     void getRolByNameTest() {
-        String name = PROPIETARIO;
+        String name = ROLE_PROPIETARIO;
         RoleEntity mockEntity = new RoleEntity();
         Role mockRole = TestDataFactory.mockRole();
 

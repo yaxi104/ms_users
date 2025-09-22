@@ -15,8 +15,9 @@ import com.hexagonal.ms_user.domain.spi.IRolePersistencePort;
 import com.hexagonal.ms_user.domain.spi.IUserPersistencePort;
 import com.hexagonal.ms_user.domain.utils.ValidateRequest;
 
-import static com.hexagonal.ms_user.domain.utils.Constanst.EMPLEADO;
-import static com.hexagonal.ms_user.domain.utils.Constanst.PROPIETARIO;
+import static com.hexagonal.ms_user.domain.utils.Constanst.ROLE_CLIENTE;
+import static com.hexagonal.ms_user.domain.utils.Constanst.ROLE_EMPLEADO;
+import static com.hexagonal.ms_user.domain.utils.Constanst.ROLE_PROPIETARIO;
 
 public class UserUseCase implements IUserServicePort {
 
@@ -42,8 +43,8 @@ public class UserUseCase implements IUserServicePort {
 
     @Override
     public void saveOwner(User user) {
-        Role role = rolePersistencePort.getRolByName(PROPIETARIO).orElseThrow(RoleNotFoundException::new);
         ValidateRequest.checkPastDate(user.getDateBirth());
+        Role role = rolePersistencePort.getRolByName(ROLE_PROPIETARIO).orElseThrow(RoleNotFoundException::new);
         user.setRoleId(role.getId());
         validateUserRequest(user);
         if (authPersistencePort.findByEmail(user.getEmail()).isPresent()) {
@@ -67,12 +68,13 @@ public class UserUseCase implements IUserServicePort {
 
     @Override
     public void saveEmployee(User user) {
-        Role role = rolePersistencePort.getRolByName(EMPLEADO).orElseThrow(RoleNotFoundException::new);
-        user.setRoleId(role.getId());
-        validateUserRequest(user);
-        if (authPersistencePort.findByEmail(user.getEmail()).isPresent()) {
-            throw new UserAlreadyExistsException();
-        }
+        validateUserSave(user, ROLE_EMPLEADO);
+        userPersistencePort.saveUser(user);
+    }
+
+    @Override
+    public void saveCustomer(User user) {
+        validateUserSave(user, ROLE_CLIENTE);
         userPersistencePort.saveUser(user);
     }
 
@@ -103,6 +105,15 @@ public class UserUseCase implements IUserServicePort {
         userAuth.setRole(role.getName());
         userAuth.setEmail(user.getEmail());
         return userAuth;
+    }
+
+    private void validateUserSave(User user, String rol) {
+        Role role = rolePersistencePort.getRolByName(rol).orElseThrow(RoleNotFoundException::new);
+        user.setRoleId(role.getId());
+        validateUserRequest(user);
+        if (authPersistencePort.findByEmail(user.getEmail()).isPresent()) {
+            throw new UserAlreadyExistsException();
+        }
     }
 
 }

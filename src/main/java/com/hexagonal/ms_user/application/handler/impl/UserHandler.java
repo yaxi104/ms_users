@@ -1,6 +1,7 @@
 package com.hexagonal.ms_user.application.handler.impl;
 
 import com.hexagonal.ms_user.application.dto.request.AuthRequest;
+import com.hexagonal.ms_user.application.dto.request.UserCustomerRequest;
 import com.hexagonal.ms_user.application.dto.request.UserEmployeeRequest;
 import com.hexagonal.ms_user.application.dto.request.UserOwnerRequest;
 import com.hexagonal.ms_user.application.dto.response.AuthResponse;
@@ -8,6 +9,7 @@ import com.hexagonal.ms_user.application.dto.response.UserAuthResponse;
 import com.hexagonal.ms_user.application.dto.response.UserResponse;
 import com.hexagonal.ms_user.application.handler.IUserHandler;
 import com.hexagonal.ms_user.application.mapper.IAuthMapper;
+import com.hexagonal.ms_user.application.mapper.ICustomerMapper;
 import com.hexagonal.ms_user.application.mapper.IEmployeeMapper;
 import com.hexagonal.ms_user.application.mapper.IOwnerMapper;
 import com.hexagonal.ms_user.application.mapper.IUserMapper;
@@ -27,6 +29,8 @@ public class UserHandler implements IUserHandler {
     private final IAuthMapper authMapper;
     private final IUserMapper userMapper;
     private final IEmployeeMapper employeeMapper;
+    private final ICustomerMapper customerMapper;
+
 
     @Override
     public AuthResponse authUser(AuthRequest authRequest) {
@@ -57,5 +61,11 @@ public class UserHandler implements IUserHandler {
     @Override
     public void saveEmployee(UserEmployeeRequest userEmployeeRequest) {
         userServicePort.saveEmployee(employeeMapper.toEmployee(userEmployeeRequest));
+    }
+
+    @Override
+    public void saveCustomer(UserCustomerRequest userCustomerRequest) {
+        userServicePort.saveCustomer(customerMapper.toCustomer(userCustomerRequest));
+
     }
 }

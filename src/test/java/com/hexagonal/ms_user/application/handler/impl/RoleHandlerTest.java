@@ -12,7 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static com.hexagonal.ms_user.domain.utils.Constanst.PROPIETARIO;
+import static com.hexagonal.ms_user.domain.utils.Constanst.ROLE_PROPIETARIO;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -55,7 +55,7 @@ class RoleHandlerTest {
 
     @Test
     void getRolByNameSuccessTest() {
-        String name = PROPIETARIO;
+        String name = ROLE_PROPIETARIO;
         Role role = TestDataFactory.mockRole();
 
         when(roleServicePort.getRolByName(name)).thenReturn(role);
