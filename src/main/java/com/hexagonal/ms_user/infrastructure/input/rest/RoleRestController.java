@@ -81,6 +81,7 @@ public class RoleRestController {
                     )
             }
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/foodcourt")
     public ResponseEntity<Void> saveRole(@RequestBody RoleRequest roleRequest) {
         roleHandler.saveRole(roleRequest);

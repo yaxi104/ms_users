@@ -5,7 +5,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost/usuarios
+    url: jdbc:mysql://localhost/USUARIOS
     username: root
     password: root
 
