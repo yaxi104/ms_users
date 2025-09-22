@@ -16,6 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static com.hexagonal.ms_user.domain.utils.Constanst.ADMIN;
+import static com.hexagonal.ms_user.domain.utils.Constanst.PROPIETARIO;
 
 @Configuration
 @EnableMethodSecurity
@@ -52,6 +53,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/role/foodcourt").hasRole("SUPERADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/v1/role/foodcourt**")
                         .hasAnyRole(ADMIN, "PROPIETARIO", "EMPLEADO")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/employee").hasRole(PROPIETARIO)
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex

@@ -8,11 +8,13 @@ public interface IUserServicePort {
 
     TokenResponse authUser(User user);
 
-    void saveUser(User user);
+    void saveOwner(User user);
 
     User getUserByEmail(String email);
 
     User getUserById(Long id);
 
     UserAuth getUserByIdAuth(Long id);
+
+    void saveEmployee(User user);
 }

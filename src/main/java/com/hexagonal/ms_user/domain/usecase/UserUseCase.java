@@ -15,6 +15,7 @@ import com.hexagonal.ms_user.domain.spi.IRolePersistencePort;
 import com.hexagonal.ms_user.domain.spi.IUserPersistencePort;
 import com.hexagonal.ms_user.domain.utils.ValidateRequest;
 
+import static com.hexagonal.ms_user.domain.utils.Constanst.EMPLEADO;
 import static com.hexagonal.ms_user.domain.utils.Constanst.PROPIETARIO;
 
 public class UserUseCase implements IUserServicePort {
@@ -40,8 +41,9 @@ public class UserUseCase implements IUserServicePort {
     }
 
     @Override
-    public void saveUser(User user) {
+    public void saveOwner(User user) {
         Role role = rolePersistencePort.getRolByName(PROPIETARIO).orElseThrow(RoleNotFoundException::new);
+        ValidateRequest.checkPastDate(user.getDateBirth());
         user.setRoleId(role.getId());
         validateUserRequest(user);
         if (authPersistencePort.findByEmail(user.getEmail()).isPresent()) {
@@ -64,6 +66,17 @@ public class UserUseCase implements IUserServicePort {
     }
 
     @Override
+    public void saveEmployee(User user) {
+        Role role = rolePersistencePort.getRolByName(EMPLEADO).orElseThrow(RoleNotFoundException::new);
+        user.setRoleId(role.getId());
+        validateUserRequest(user);
+        if (authPersistencePort.findByEmail(user.getEmail()).isPresent()) {
+            throw new UserAlreadyExistsException();
+        }
+        userPersistencePort.saveUser(user);
+    }
+
+    @Override
     public User getUserById(Long id) {
         return authPersistencePort.findById(id)
                 .orElseThrow(UserNotFoundException::new);
@@ -74,7 +87,6 @@ public class UserUseCase implements IUserServicePort {
         ValidateRequest.checkNotBlank(user.getLastName());
         ValidateRequest.checkIdNumber(user.getIdNumber());
         ValidateRequest.checkNumberPhone(user.getPhoneNumber());
-        ValidateRequest.checkPastDate(user.getDateBirth());
         validateCredentials(user);
         user.setPassword(passwordEncodePort.encodePassword(user.getPassword()));
     }

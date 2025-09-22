@@ -1,6 +1,7 @@
 package com.hexagonal.ms_user.infrastructure.input.rest;
 
 import com.hexagonal.ms_user.application.dto.request.AuthRequest;
+import com.hexagonal.ms_user.application.dto.request.UserEmployeeRequest;
 import com.hexagonal.ms_user.application.dto.request.UserOwnerRequest;
 import com.hexagonal.ms_user.application.dto.response.AuthResponse;
 import com.hexagonal.ms_user.application.dto.response.UserAuthResponse;
@@ -140,7 +141,7 @@ public class UserRestController {
     )
     @PostMapping("/owner")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> saveUser(@RequestBody UserOwnerRequest userOwnerRequest) {
+    public ResponseEntity<Void> saveOwner(@RequestBody UserOwnerRequest userOwnerRequest) {
         userHandler.saveOwner(userOwnerRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -364,6 +365,63 @@ public class UserRestController {
     public ResponseEntity<UserAuthResponse> getUserByIdAuth(@PathVariable("id") Long id) {
         UserAuthResponse user = userHandler.getUserByIdAuth(id);
         return ResponseEntity.ok(user);
+    }
+
+    @Operation(
+            summary = "Create employee user",
+            description = "Creates a new user with EMPLEADO role. Only accessible by PROPIETARIO.",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "User created"),
+                    @ApiResponse(
+                            responseCode = "400", description = "Invalid request",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Bad Request Example",
+                                            value = """
+                                                    {
+                                                        "Message": "The request contains invalid data. Please check the submitted fields and try again"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "403", description = "Not access",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Fordibben Example",
+                                            value = """
+                                                    {
+                                                        "Message": "You do not have permission to access this resource"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "409", description = "Conflict",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Conflict Example",
+                                            value = """
+                                                    {
+                                                        "Message": "User already exists"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    )
+            }
+    )
+    @PostMapping("/employee")
+    @PreAuthorize("hasRole('PROPIETARIO')")
+    public ResponseEntity<Void> saveEmployee(@RequestBody UserEmployeeRequest userEmployeeRequest) {
+        userHandler.saveEmployee(userEmployeeRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
 }

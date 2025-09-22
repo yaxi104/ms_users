@@ -97,16 +97,11 @@ public class RoleRestController {
                                     examples = @ExampleObject(
                                             name = "Role Response Example",
                                             value = """
-                                                    //                                                    {
-                                                    //                                                        "id": 3,
-                                                    //                                                        "firstName": "Pastini",
-                                                    //                                                        "lastName": "Sabrosino",
-                                                    //                                                        "idNumber": "541616415455",
-                                                    //                                                        "phoneNumber": "+573001354155",
-                                                    //                                                        "dateBirth": "2001-01-17",
-                                                    //                                                        "email": "propietariopastini@plazoleta.com",
-                                                    //                                                        "password": "$2a$10$5uDAphEHKL/MkUXQD6hnYONHwA2gfdBA7iVNctVc1p4rBLPv/HCYu"
-                                                    //                                                    }
+                                                    {
+                                                        "id": 1,
+                                                        "name": "SUPERADMIN",
+                                                        "description": "Super Administrador del sistema"
+                                                    }
                                                     """
                                     )
                             )
@@ -172,16 +167,11 @@ public class RoleRestController {
                                     examples = @ExampleObject(
                                             name = "Role Response Example",
                                             value = """
-                                                    //                                                    {
-                                                    //                                                        "id": 3,
-                                                    //                                                        "firstName": "Pastini",
-                                                    //                                                        "lastName": "Sabrosino",
-                                                    //                                                        "idNumber": "541616415455",
-                                                    //                                                        "phoneNumber": "+573001354155",
-                                                    //                                                        "dateBirth": "2001-01-17",
-                                                    //                                                        "email": "propietariopastini@plazoleta.com",
-                                                    //                                                        "password": "$2a$10$5uDAphEHKL/MkUXQD6hnYONHwA2gfdBA7iVNctVc1p4rBLPv/HCYu"
-                                                    //                                                    }
+                                                    {
+                                                        "id": 1,
+                                                        "name": "SUPERADMIN",
+                                                        "description": "Super Administrador del sistema"
+                                                    }
                                                     """
                                     )
                             )

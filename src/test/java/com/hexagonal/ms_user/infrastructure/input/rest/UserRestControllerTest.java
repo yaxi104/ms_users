@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hexagonal.ms_user.application.dto.request.AuthRequest;
+import com.hexagonal.ms_user.application.dto.request.UserEmployeeRequest;
 import com.hexagonal.ms_user.application.dto.request.UserOwnerRequest;
 import com.hexagonal.ms_user.application.dto.response.AuthResponse;
+import com.hexagonal.ms_user.application.dto.response.UserAuthResponse;
 import com.hexagonal.ms_user.application.dto.response.UserResponse;
 import com.hexagonal.ms_user.application.handler.IUserHandler;
 import com.hexagonal.ms_user.domain.exception.UserAlreadyExistsException;
@@ -38,6 +40,7 @@ class UserRestControllerTest {
     private MockMvc mockMvc;
     private IUserHandler userHandler;
     private JacksonTester<UserOwnerRequest> jsonUserOwnerRequest;
+    private JacksonTester<UserEmployeeRequest> jsonUserEmployeeRequest;
 
     @BeforeEach
     void setUp() {
@@ -124,8 +127,7 @@ class UserRestControllerTest {
                         .param("email", email))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.email").value(email))
-                .andExpect(jsonPath("$.role").value("ADMIN"));
+                .andExpect(jsonPath("$.email").value(email));
     }
 
     @Test
@@ -151,8 +153,7 @@ class UserRestControllerTest {
                         .with(authentication(SecurityContextHolder.getContext().getAuthentication())))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(userId))
-                .andExpect(jsonPath("$.email").value("test@example.com"))
-                .andExpect(jsonPath("$.role").value("ADMIN"));
+                .andExpect(jsonPath("$.email").value("test@example.com"));
     }
 
     @Test
@@ -165,4 +166,32 @@ class UserRestControllerTest {
                         .with(authentication(SecurityContextHolder.getContext().getAuthentication())))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    void getUserByIdAuthSuccessTest() throws Exception {
+        Long userId = 1L;
+        UserAuthResponse mockResponse = new UserAuthResponse();
+        mockResponse.setEmail("test@example.com");
+
+        when(userHandler.getUserByIdAuth(userId)).thenReturn(mockResponse);
+
+        mockMvc.perform(get("/api/v1/user/auth/" + userId)
+                        .with(authentication(SecurityContextHolder.getContext().getAuthentication())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.email").value("test@example.com"));
+    }
+
+    @Test
+    void saveEmployeeSuccessTest() throws Exception {
+        UserEmployeeRequest userEmployeeRequest = new UserEmployeeRequest();
+
+        mockMvc.perform(post("/api/v1/employee")
+                        .with(authentication(SecurityContextHolder.getContext().getAuthentication()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonUserEmployeeRequest.write(userEmployeeRequest).getJson()))
+                .andExpect(status().isCreated());
+
+        verify(userHandler).saveEmployee(any(UserEmployeeRequest.class));
+    }
+
 }

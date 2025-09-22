@@ -1,12 +1,14 @@
 package com.hexagonal.ms_user.application.handler.impl;
 
 import com.hexagonal.ms_user.application.dto.request.AuthRequest;
+import com.hexagonal.ms_user.application.dto.request.UserEmployeeRequest;
 import com.hexagonal.ms_user.application.dto.request.UserOwnerRequest;
 import com.hexagonal.ms_user.application.dto.response.AuthResponse;
 import com.hexagonal.ms_user.application.dto.response.UserAuthResponse;
 import com.hexagonal.ms_user.application.dto.response.UserResponse;
 import com.hexagonal.ms_user.application.handler.IUserHandler;
 import com.hexagonal.ms_user.application.mapper.IAuthMapper;
+import com.hexagonal.ms_user.application.mapper.IEmployeeMapper;
 import com.hexagonal.ms_user.application.mapper.IOwnerMapper;
 import com.hexagonal.ms_user.application.mapper.IUserMapper;
 import com.hexagonal.ms_user.domain.api.IUserServicePort;
@@ -24,6 +26,7 @@ public class UserHandler implements IUserHandler {
     private final IOwnerMapper ownerMapper;
     private final IAuthMapper authMapper;
     private final IUserMapper userMapper;
+    private final IEmployeeMapper employeeMapper;
 
     @Override
     public AuthResponse authUser(AuthRequest authRequest) {
@@ -33,7 +36,7 @@ public class UserHandler implements IUserHandler {
 
     @Override
     public void saveOwner(UserOwnerRequest userOwnerRequest) {
-        userServicePort.saveUser(ownerMapper.toOwner(userOwnerRequest));
+        userServicePort.saveOwner(ownerMapper.toOwner(userOwnerRequest));
     }
 
     @Override
@@ -49,5 +52,10 @@ public class UserHandler implements IUserHandler {
     @Override
     public UserAuthResponse getUserByIdAuth(Long id) {
         return userMapper.toUserAuthReponse(userServicePort.getUserByIdAuth(id));
+    }
+
+    @Override
+    public void saveEmployee(UserEmployeeRequest userEmployeeRequest) {
+        userServicePort.saveEmployee(employeeMapper.toEmployee(userEmployeeRequest));
     }
 }

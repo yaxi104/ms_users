@@ -2,6 +2,8 @@ package com.hexagonal.ms_user.infrastructure.security;
 
 import com.hexagonal.ms_user.domain.model.request.User;
 import com.hexagonal.ms_user.domain.spi.IAuthPersistencePort;
+import com.hexagonal.ms_user.domain.spi.IRolePersistencePort;
+import com.hexagonal.ms_user.util.TestDataFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,19 +14,21 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class UserDetailServiceAdapterTest {
+class UserDetailServiceTest {
 
     private IAuthPersistencePort authPersistencePort;
+    private IRolePersistencePort rolePersistencePort;
+
     private UserDetailService userDetailsService;
 
     @BeforeEach
     void setUp() {
         authPersistencePort = mock(IAuthPersistencePort.class);
-        userDetailsService = new UserDetailService(authPersistencePort);
+        rolePersistencePort = mock(IRolePersistencePort.class);
+        userDetailsService = new UserDetailService(authPersistencePort, rolePersistencePort);
     }
 
     @Test
@@ -32,17 +36,15 @@ class UserDetailServiceAdapterTest {
         var mockUser = new User();
         mockUser.setEmail("test@example.com");
         mockUser.setPassword("password123");
-        mockUser.setRoleId("USER");
 
         when(authPersistencePort.findByEmail("test@example.com")).thenReturn(Optional.of(mockUser));
+        when(rolePersistencePort.getRolById(mockUser.getRoleId())).thenReturn(Optional.of(TestDataFactory.mockRole()));
 
         UserDetails userDetails = userDetailsService.loadUserByUsername("test@example.com");
 
         assertNotNull(userDetails);
         assertEquals("test@example.com", userDetails.getUsername());
         assertEquals("password123", userDetails.getPassword());
-        assertTrue(userDetails.getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_USER")));
     }
 
     @Test

@@ -1,13 +1,17 @@
 package com.hexagonal.ms_user.application.handler.impl;
 
 import com.hexagonal.ms_user.application.dto.request.AuthRequest;
+import com.hexagonal.ms_user.application.dto.request.UserEmployeeRequest;
 import com.hexagonal.ms_user.application.dto.request.UserOwnerRequest;
+import com.hexagonal.ms_user.application.dto.response.UserAuthResponse;
 import com.hexagonal.ms_user.application.dto.response.UserResponse;
 import com.hexagonal.ms_user.application.mapper.IAuthMapper;
+import com.hexagonal.ms_user.application.mapper.IEmployeeMapper;
 import com.hexagonal.ms_user.application.mapper.IOwnerMapper;
 import com.hexagonal.ms_user.application.mapper.IUserMapper;
 import com.hexagonal.ms_user.domain.api.IUserServicePort;
 import com.hexagonal.ms_user.domain.model.request.User;
+import com.hexagonal.ms_user.domain.model.response.UserAuth;
 import com.hexagonal.ms_user.util.TestDataFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,6 +40,9 @@ class UserHandlerTest {
 
     @Mock
     private IUserMapper userMapper;
+
+    @Mock
+    private IEmployeeMapper employeeMapper;
 
     @Test
     void authUserSuccessTest() {
@@ -85,6 +92,30 @@ class UserHandlerTest {
         assertEquals(mockResponse, result);
         verify(userServicePort).getUserById(userId);
         verify(userMapper).toResponse(mockUser);
+    }
+
+    @Test
+    void getUserByIdAuthSuccessTest() {
+        Long userId = 1L;
+        UserAuthResponse mockUser = new UserAuthResponse();
+        UserAuth userAuth = new UserAuth();
+
+        when(userServicePort.getUserByIdAuth(userId)).thenReturn(userAuth);
+        when(userMapper.toUserAuthReponse(userAuth)).thenReturn(mockUser);
+
+        UserAuthResponse result = userHandler.getUserByIdAuth(userId);
+
+        assertNotNull(result);
+        verify(userServicePort).getUserByIdAuth(userId);
+        verify(userMapper).toUserAuthReponse(userAuth);
+    }
+
+    @Test
+    void saveEmployeeSuccessTest() {
+        UserEmployeeRequest userEmployeeRequest = new UserEmployeeRequest();
+        userHandler.saveEmployee(userEmployeeRequest);
+
+        verify(employeeMapper).toEmployee(userEmployeeRequest);
     }
 
 }
