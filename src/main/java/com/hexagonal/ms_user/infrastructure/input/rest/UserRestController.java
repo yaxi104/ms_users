@@ -3,6 +3,7 @@ package com.hexagonal.ms_user.infrastructure.input.rest;
 import com.hexagonal.ms_user.application.dto.request.AuthRequest;
 import com.hexagonal.ms_user.application.dto.request.UserOwnerRequest;
 import com.hexagonal.ms_user.application.dto.response.AuthResponse;
+import com.hexagonal.ms_user.application.dto.response.UserAuthResponse;
 import com.hexagonal.ms_user.application.dto.response.UserResponse;
 import com.hexagonal.ms_user.application.handler.IUserHandler;
 import io.swagger.v3.oas.annotations.Operation;
@@ -293,4 +294,76 @@ public class UserRestController {
         UserResponse user = userHandler.getUserById(id);
         return ResponseEntity.ok(user);
     }
+
+    @Operation(
+            summary = "Get user auth by Email",
+            description = "Retrieves a user auth by their unique email. Accessible by users with roles ADMIN, PROPIETARIO or EMPLEADO.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "User valid",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "User Response Example",
+                                            value = """
+                                                    {
+                                                        "id": 3,
+                                                        "email": "propietariopastini@plazoleta.com",
+                                                        "password": "$2a$10$5uDAphEHKL/MkUXQD6hnYONHwA2gfdBA7iVNctVc1p4rBLPv/HCYu",
+                                                        "role": "ADMIN"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400", description = "Invalid request",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Bad Request Example",
+                                            value = """
+                                                    {
+                                                        "Message": "The request contains invalid data. Please check the submitted fields and try again"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "403", description = "Not access",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Fordibben Example",
+                                            value = """
+                                                    {
+                                                        "Message": "You do not have permission to access this resource"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404", description = "Not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Not Found Example",
+                                            value = """
+                                                    {
+                                                        "Message": "User not found"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    )
+            }
+    )
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROPIETARIO', 'EMPLEADO')")
+    @GetMapping("/user/auth/{id}")
+    public ResponseEntity<UserAuthResponse> getUserByIdAuth(@PathVariable("id") Long id) {
+        UserAuthResponse user = userHandler.getUserByIdAuth(id);
+        return ResponseEntity.ok(user);
+    }
+
 }

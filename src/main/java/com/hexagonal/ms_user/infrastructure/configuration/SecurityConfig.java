@@ -15,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static com.hexagonal.ms_user.domain.utils.Constanst.ADMIN;
+
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
@@ -44,9 +46,12 @@ public class SecurityConfig {
                                 "/swagger-ui/index.html"
                         ).permitAll()
                         .requestMatchers("/api/v1/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/owner").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/owner").hasRole(ADMIN)
                         .requestMatchers(HttpMethod.GET, "/api/v1/user**")
-                        .hasAnyRole("ADMIN", "PROPIETARIO", "EMPLEADO")
+                        .hasAnyRole(ADMIN, "PROPIETARIO", "EMPLEADO")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/role/foodcourt").hasRole("SUPERADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/role/foodcourt**")
+                        .hasAnyRole(ADMIN, "PROPIETARIO", "EMPLEADO")
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex

@@ -1,6 +1,9 @@
 package com.hexagonal.ms_user.infrastructure.security.jwt;
 
+import com.hexagonal.ms_user.domain.exception.RoleNotFoundException;
+import com.hexagonal.ms_user.domain.model.request.Role;
 import com.hexagonal.ms_user.domain.model.request.User;
+import com.hexagonal.ms_user.domain.spi.IRolePersistencePort;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -19,18 +22,21 @@ public class JwtService {
 
     private final SecretKey secretKey;
     private final long tokenValidity;
+    private final IRolePersistencePort rolePersistencePort;
 
-    public JwtService(
-            @Value("${jwt.secret}") String secret,
-            @Value("${jwt.token-validity}") long tokenValidity
-    ) {
+    public JwtService(@Value("${jwt.secret}") String secret,
+                      @Value("${jwt.token-validity}") long tokenValidity,
+                      IRolePersistencePort rolePersistencePort) {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes());
         this.tokenValidity = tokenValidity;
+        this.rolePersistencePort = rolePersistencePort;
     }
 
     public String generateToken(User user) {
+        Role role = rolePersistencePort.getRolById(user.getRoleId()).orElseThrow(RoleNotFoundException::new);
+
         Map<String, Object> claims = Map.of(
-                "role", user.getRole(),
+                "role", role.getName(),
                 "id", user.getId()
         );
 

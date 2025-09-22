@@ -32,7 +32,7 @@ class UserDetailServiceAdapterTest {
         var mockUser = new User();
         mockUser.setEmail("test@example.com");
         mockUser.setPassword("password123");
-        mockUser.setRole("USER");
+        mockUser.setRoleId("USER");
 
         when(authPersistencePort.findByEmail("test@example.com")).thenReturn(Optional.of(mockUser));
 

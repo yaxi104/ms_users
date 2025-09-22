@@ -1,9 +1,9 @@
-package com.hexagonal.ms_user.infrastructure.output.jpa.adapter;
+package com.hexagonal.ms_user.infrastructure.output.jpa.user.adapter;
 
 import com.hexagonal.ms_user.domain.model.request.User;
 import com.hexagonal.ms_user.domain.spi.IAuthPersistencePort;
-import com.hexagonal.ms_user.infrastructure.output.jpa.mapper.IUserEntityMapper;
-import com.hexagonal.ms_user.infrastructure.output.jpa.repository.IUserRepository;
+import com.hexagonal.ms_user.infrastructure.output.jpa.user.mapper.IUserEntityMapper;
+import com.hexagonal.ms_user.infrastructure.output.jpa.user.repository.IUserRepository;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;

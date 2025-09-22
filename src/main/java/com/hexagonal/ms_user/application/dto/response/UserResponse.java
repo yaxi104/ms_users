@@ -34,6 +34,6 @@ public class UserResponse {
     @Schema(description = "Contraseña del usuario. Se debe enviar en texto plano, será encriptada internamente", example = "MiClaveSegura123")
     private String password;
 
-    @Schema(description = "Role del usuario", example = "ADMIN")
-    private String role;
+    @Schema(description = "Role del usuario", example = "1")
+    private Long roleId;
 }

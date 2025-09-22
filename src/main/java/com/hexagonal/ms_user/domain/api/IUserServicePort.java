@@ -2,6 +2,7 @@ package com.hexagonal.ms_user.domain.api;
 
 import com.hexagonal.ms_user.domain.model.request.User;
 import com.hexagonal.ms_user.domain.model.response.TokenResponse;
+import com.hexagonal.ms_user.domain.model.response.UserAuth;
 
 public interface IUserServicePort {
 
@@ -12,4 +13,6 @@ public interface IUserServicePort {
     User getUserByEmail(String email);
 
     User getUserById(Long id);
+
+    UserAuth getUserByIdAuth(Long id);
 }

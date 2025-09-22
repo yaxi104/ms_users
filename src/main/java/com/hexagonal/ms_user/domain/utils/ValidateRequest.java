@@ -56,4 +56,5 @@ public class ValidateRequest {
             throw new BadRequestException();
         }
     }
+
 }

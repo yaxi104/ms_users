@@ -31,7 +31,7 @@ class JwtServiceTest {
     @Test
     void generateTokenContainsClaimsAndSubject() {
         User user = TestDataFactory.mockUser();
-        user.setRole("ROLE_" + user.getRole());
+        user.setRoleId("ROLE_" + user.getRoleId());
         String token = jwtService.generateToken(user);
         assertNotNull(token);
 

@@ -1,6 +1,6 @@
-package com.hexagonal.ms_user.infrastructure.output.jpa.repository;
+package com.hexagonal.ms_user.infrastructure.output.jpa.user.repository;
 
-import com.hexagonal.ms_user.infrastructure.output.jpa.entity.UserEntity;
+import com.hexagonal.ms_user.infrastructure.output.jpa.user.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

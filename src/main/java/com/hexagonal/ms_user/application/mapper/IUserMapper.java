@@ -1,7 +1,9 @@
 package com.hexagonal.ms_user.application.mapper;
 
+import com.hexagonal.ms_user.application.dto.response.UserAuthResponse;
 import com.hexagonal.ms_user.application.dto.response.UserResponse;
 import com.hexagonal.ms_user.domain.model.request.User;
+import com.hexagonal.ms_user.domain.model.response.UserAuth;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
@@ -11,5 +13,7 @@ import org.mapstruct.ReportingPolicy;
 public interface IUserMapper {
 
     UserResponse toResponse(User user);
+
+    UserAuthResponse toUserAuthReponse (UserAuth userAuth);
 
 }

@@ -5,7 +5,7 @@ import com.hexagonal.ms_user.application.dto.request.UserOwnerRequest;
 import com.hexagonal.ms_user.application.dto.response.UserResponse;
 import com.hexagonal.ms_user.domain.model.request.User;
 import com.hexagonal.ms_user.domain.model.response.TokenResponse;
-import com.hexagonal.ms_user.infrastructure.output.jpa.entity.UserEntity;
+import com.hexagonal.ms_user.infrastructure.output.jpa.user.entity.UserEntity;
 
 import java.time.LocalDate;
 
@@ -36,7 +36,7 @@ public class TestDataFactory {
         user.setDateBirth(LocalDate.of(2000, 9, 17));
         user.setEmail("test@example.com");
         user.setPassword("password123");
-        user.setRole("PROPIETARIO");
+        user.setRoleId("PROPIETARIO");
         return user;
     }
 

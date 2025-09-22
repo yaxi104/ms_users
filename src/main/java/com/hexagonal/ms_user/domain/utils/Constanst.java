@@ -11,4 +11,10 @@ public class Constanst {
     public static final String PATTERN_ONLY_NUMBER = "\\d+";
     public static final Integer MAX_LENGTH = 13;
     public static final Integer MAX_AGE = 18;
+    public static final String PATTERN_ONLY_UPPERCASE = "^[A-Z]+$";
+
+    /* ROLE */
+    public static final String ADMIN = "ADMIN";
+    public static final String PROPIETARIO = "PROPIETARIO";
+    public static final String EMPLEADO = "EMPLEADO";
 }

@@ -3,6 +3,7 @@ package com.hexagonal.ms_user.application.handler.impl;
 import com.hexagonal.ms_user.application.dto.request.AuthRequest;
 import com.hexagonal.ms_user.application.dto.request.UserOwnerRequest;
 import com.hexagonal.ms_user.application.dto.response.AuthResponse;
+import com.hexagonal.ms_user.application.dto.response.UserAuthResponse;
 import com.hexagonal.ms_user.application.dto.response.UserResponse;
 import com.hexagonal.ms_user.application.handler.IUserHandler;
 import com.hexagonal.ms_user.application.mapper.IAuthMapper;
@@ -43,5 +44,10 @@ public class UserHandler implements IUserHandler {
     @Override
     public UserResponse getUserById(Long id) {
         return userMapper.toResponse(userServicePort.getUserById(id));
+    }
+
+    @Override
+    public UserAuthResponse getUserByIdAuth(Long id) {
+        return userMapper.toUserAuthReponse(userServicePort.getUserByIdAuth(id));
     }
 }

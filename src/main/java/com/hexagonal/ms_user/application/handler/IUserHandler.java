@@ -3,6 +3,7 @@ package com.hexagonal.ms_user.application.handler;
 import com.hexagonal.ms_user.application.dto.request.AuthRequest;
 import com.hexagonal.ms_user.application.dto.request.UserOwnerRequest;
 import com.hexagonal.ms_user.application.dto.response.AuthResponse;
+import com.hexagonal.ms_user.application.dto.response.UserAuthResponse;
 import com.hexagonal.ms_user.application.dto.response.UserResponse;
 
 public interface IUserHandler {
@@ -14,4 +15,7 @@ public interface IUserHandler {
     UserResponse getUserByEmail(String email);
 
     UserResponse getUserById(Long id);
+
+    UserAuthResponse getUserByIdAuth(Long id);
+
 }

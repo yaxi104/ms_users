@@ -1,4 +1,4 @@
-package com.hexagonal.ms_user.infrastructure.output.jpa.entity;
+package com.hexagonal.ms_user.infrastructure.output.jpa.user.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -46,7 +46,7 @@ public class UserEntity {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "role", nullable = false, length = 20)
-    private String role;
+    @Column(name = "roleId")
+    private Long roleId;
 
 }

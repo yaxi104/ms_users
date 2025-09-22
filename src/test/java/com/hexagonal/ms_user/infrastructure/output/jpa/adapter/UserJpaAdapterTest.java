@@ -1,7 +1,8 @@
 package com.hexagonal.ms_user.infrastructure.output.jpa.adapter;
 
-import com.hexagonal.ms_user.infrastructure.output.jpa.mapper.IUserEntityMapper;
-import com.hexagonal.ms_user.infrastructure.output.jpa.repository.IUserRepository;
+import com.hexagonal.ms_user.infrastructure.output.jpa.user.mapper.IUserEntityMapper;
+import com.hexagonal.ms_user.infrastructure.output.jpa.user.repository.IUserRepository;
+import com.hexagonal.ms_user.infrastructure.output.jpa.user.adapter.UserJpaAdapter;
 import com.hexagonal.ms_user.util.TestDataFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
