@@ -36,4 +36,7 @@ public class UserResponse {
 
     @Schema(description = "Role del usuario", example = "1")
     private Long roleId;
+
+    @Schema(description = "Id del restaurante solo para propietario", example = "1")
+    private Long restaurantId;
 }

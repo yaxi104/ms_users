@@ -13,6 +13,7 @@ public class User {
     private String email;
     private String password;
     private Long roleId;
+    private Long restaurantId;
 
     public User() {
     }
@@ -27,6 +28,7 @@ public class User {
         this.email = builder.email;
         this.password = builder.password;
         this.roleId = builder.roleId;
+        this.restaurantId = builder.build().restaurantId;
     }
 
     public static class Builder {
@@ -160,5 +162,13 @@ public class User {
 
     public void setRoleId(Long roleId) {
         this.roleId = roleId;
+    }
+
+    public Long getRestaurantId() {
+        return restaurantId;
+    }
+
+    public void setRestaurantId(Long restaurantId) {
+        this.restaurantId = restaurantId;
     }
 }

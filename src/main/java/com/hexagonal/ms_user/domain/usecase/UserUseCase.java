@@ -1,6 +1,7 @@
 package com.hexagonal.ms_user.domain.usecase;
 
 import com.hexagonal.ms_user.domain.api.IUserServicePort;
+import com.hexagonal.ms_user.domain.exception.BadRequestException;
 import com.hexagonal.ms_user.domain.exception.RoleNotFoundException;
 import com.hexagonal.ms_user.domain.exception.UserAlreadyExistsException;
 import com.hexagonal.ms_user.domain.exception.UserNotFoundException;
@@ -69,6 +70,9 @@ public class UserUseCase implements IUserServicePort {
     @Override
     public void saveEmployee(User user) {
         validateUserSave(user, ROLE_EMPLEADO);
+        if (user.getRestaurantId() == null) {
+            throw new BadRequestException();
+        }
         userPersistencePort.saveUser(user);
     }
 
@@ -115,5 +119,4 @@ public class UserUseCase implements IUserServicePort {
             throw new UserAlreadyExistsException();
         }
     }
-
 }

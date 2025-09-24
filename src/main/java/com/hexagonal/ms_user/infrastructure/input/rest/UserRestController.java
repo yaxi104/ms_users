@@ -215,7 +215,7 @@ public class UserRestController {
                     )
             }
     )
-    @PreAuthorize("hasAnyRole('ADMIN', 'PROPIETARIO', 'EMPLEADO')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROPIETARIO', 'EMPLEADO', 'CLIENTE')")
     @GetMapping("/user")
     public ResponseEntity<UserResponse> getUserByEmail(@RequestParam("email") String email) {
         UserResponse user = userHandler.getUserByEmail(email);
@@ -290,7 +290,7 @@ public class UserRestController {
                     )
             }
     )
-    @PreAuthorize("hasAnyRole('ADMIN', 'PROPIETARIO', 'EMPLEADO')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROPIETARIO', 'EMPLEADO', 'CLIENTE')")
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable("id") Long id) {
         UserResponse user = userHandler.getUserById(id);
@@ -361,7 +361,7 @@ public class UserRestController {
                     )
             }
     )
-    @PreAuthorize("hasAnyRole('ADMIN', 'PROPIETARIO', 'EMPLEADO')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROPIETARIO', 'EMPLEADO', 'CLIENTE')")
     @GetMapping("/user/auth/{id}")
     public ResponseEntity<UserAuthResponse> getUserByIdAuth(@PathVariable("id") Long id) {
         UserAuthResponse user = userHandler.getUserByIdAuth(id);

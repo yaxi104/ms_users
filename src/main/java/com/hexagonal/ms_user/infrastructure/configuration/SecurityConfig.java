@@ -16,6 +16,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static com.hexagonal.ms_user.domain.utils.Constanst.ROLE_ADMIN;
+import static com.hexagonal.ms_user.domain.utils.Constanst.ROLE_CLIENTE;
+import static com.hexagonal.ms_user.domain.utils.Constanst.ROLE_EMPLEADO;
 import static com.hexagonal.ms_user.domain.utils.Constanst.ROLE_PROPIETARIO;
 
 @Configuration
@@ -49,10 +51,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/owner").hasRole(ROLE_ADMIN)
                         .requestMatchers(HttpMethod.GET, "/api/v1/user**")
-                        .hasAnyRole(ROLE_ADMIN, "PROPIETARIO", "EMPLEADO")
+                        .hasAnyRole(ROLE_ADMIN, ROLE_PROPIETARIO, ROLE_EMPLEADO, ROLE_CLIENTE)
                         .requestMatchers(HttpMethod.POST, "/api/v1/role/foodcourt").hasRole(ROLE_ADMIN)
                         .requestMatchers(HttpMethod.GET, "/api/v1/role/foodcourt**")
-                        .hasAnyRole(ROLE_ADMIN, "PROPIETARIO", "EMPLEADO")
+                        .hasAnyRole(ROLE_ADMIN, ROLE_PROPIETARIO, ROLE_EMPLEADO, ROLE_CLIENTE)
                         .requestMatchers(HttpMethod.POST, "/api/v1/employee").hasRole(ROLE_PROPIETARIO)
                         .requestMatchers("/api/v1/customer").permitAll()
                         .anyRequest().authenticated()

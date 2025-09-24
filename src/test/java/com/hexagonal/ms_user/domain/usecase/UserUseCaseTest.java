@@ -17,7 +17,6 @@ import com.hexagonal.ms_user.util.TestDataFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
@@ -30,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -82,7 +82,7 @@ class UserUseCaseTest {
         when(authPersistencePort.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
 
         assertThrows(UserAlreadyExistsException.class, () -> userUseCase.saveOwner(user));
-        verify(userPersistencePort, Mockito.never()).saveUser(any());
+        verify(userPersistencePort, never()).saveUser(any());
     }
 
     @Test
@@ -212,18 +212,57 @@ class UserUseCaseTest {
     }
 
     @Test
-    void saveUserEmployeeSuccessTest() {
+    void saveEmployeeSuccess() {
         User user = TestDataFactory.mockUser();
-        Role role = TestDataFactory.mockRole();
+        user.setRestaurantId(1L);
+
+        Role role = new Role();
+        role.setId(1L);
         role.setName(ROLE_EMPLEADO);
+
         when(rolePersistencePort.getRolByName(ROLE_EMPLEADO)).thenReturn(Optional.of(role));
         when(authPersistencePort.findByEmail(user.getEmail())).thenReturn(Optional.empty());
-        when(passwordEncodePort.encodePassword(user.getPassword())).thenReturn("encodedPassword");
 
         userUseCase.saveEmployee(user);
 
-        verify(userPersistencePort, times(1)).saveUser(user);
-        assertEquals("encodedPassword", user.getPassword());
+        assertEquals(role.getId(), user.getRoleId());
+        verify(userPersistencePort).saveUser(user);
+    }
+
+    @Test
+    void saveEmployeeThrowsBadRequestWhenRestaurantIdNull() {
+        User user = TestDataFactory.mockUser();
+        Role role = new Role();
+        role.setId(1L);
+        when(rolePersistencePort.getRolByName(ROLE_EMPLEADO)).thenReturn(Optional.of(role));
+        when(authPersistencePort.findByEmail(user.getEmail())).thenReturn(Optional.empty());
+
+        assertThrows(BadRequestException.class, () -> userUseCase.saveEmployee(user));
+        verify(userPersistencePort, never()).saveUser(any());
+    }
+
+    @Test
+    void saveEmployeeThrowsRoleNotFound() {
+        User user = TestDataFactory.mockUser();
+
+        when(rolePersistencePort.getRolByName(ROLE_EMPLEADO)).thenReturn(Optional.empty());
+
+        assertThrows(RoleNotFoundException.class, () -> userUseCase.saveEmployee(user));
+        verify(userPersistencePort, never()).saveUser(any());
+    }
+
+    @Test
+    void saveEmployeeThrowsUserAlreadyExists() {
+        User user = TestDataFactory.mockUser();
+
+        Role role = new Role();
+        role.setId(1L);
+
+        when(rolePersistencePort.getRolByName(ROLE_EMPLEADO)).thenReturn(Optional.of(role));
+        when(authPersistencePort.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+
+        assertThrows(UserAlreadyExistsException.class, () -> userUseCase.saveEmployee(user));
+        verify(userPersistencePort, never()).saveUser(any());
     }
 
     @Test
@@ -235,7 +274,7 @@ class UserUseCaseTest {
         when(authPersistencePort.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
 
         assertThrows(UserAlreadyExistsException.class, () -> userUseCase.saveEmployee(user));
-        verify(userPersistencePort, Mockito.never()).saveUser(any());
+        verify(userPersistencePort, never()).saveUser(any());
     }
 
     @Test

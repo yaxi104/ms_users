@@ -38,4 +38,8 @@ public class UserEmployeeRequest {
     @NotBlank
     @Schema(description = "Contraseña del usuario. Se debe enviar en texto plano, será encriptada internamente", example = "MiClaveSegura123")
     private String password;
+
+    @NotBlank
+    @Schema(description = "Id del restaurante", example = "1")
+    private Long restaurantId;
 }
