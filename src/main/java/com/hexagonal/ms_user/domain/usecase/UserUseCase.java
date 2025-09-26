@@ -45,12 +45,7 @@ public class UserUseCase implements IUserServicePort {
     @Override
     public void saveOwner(User user) {
         ValidateRequest.checkPastDate(user.getDateBirth());
-        Role role = rolePersistencePort.getRolByName(ROLE_PROPIETARIO).orElseThrow(RoleNotFoundException::new);
-        user.setRoleId(role.getId());
-        validateUserRequest(user);
-        if (authPersistencePort.findByEmail(user.getEmail()).isPresent()) {
-            throw new UserAlreadyExistsException();
-        }
+        validateUserSave(user, ROLE_PROPIETARIO);
         userPersistencePort.saveUser(user);
     }
 

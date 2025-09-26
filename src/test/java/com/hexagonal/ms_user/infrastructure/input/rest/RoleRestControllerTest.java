@@ -55,6 +55,8 @@ class RoleRestControllerTest {
     @Test
     void saveRoleSuccessTest() throws Exception {
         RoleRequest userOwnerRequest = new RoleRequest();
+        userOwnerRequest.setName("ROLE_FOODCOURT");
+        userOwnerRequest.setDescription("Descripcion");
 
         mockMvc.perform(post("/api/v1/role/foodcourt")
                         .with(authentication(SecurityContextHolder.getContext().getAuthentication()))
