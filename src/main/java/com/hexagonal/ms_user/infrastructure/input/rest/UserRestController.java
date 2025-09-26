@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -85,7 +86,7 @@ public class UserRestController {
             }
     )
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest authRequest) {
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest authRequest) {
         AuthResponse authResponse = userHandler.authUser(authRequest);
         return ResponseEntity.ok(authResponse);
     }
@@ -142,7 +143,7 @@ public class UserRestController {
     )
     @PostMapping("/owner")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> saveOwner(@RequestBody UserOwnerRequest userOwnerRequest) {
+    public ResponseEntity<Void> saveOwner(@Valid @RequestBody UserOwnerRequest userOwnerRequest) {
         userHandler.saveOwner(userOwnerRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -217,7 +218,7 @@ public class UserRestController {
     )
     @PreAuthorize("hasAnyRole('ADMIN', 'PROPIETARIO', 'EMPLEADO', 'CLIENTE')")
     @GetMapping("/user")
-    public ResponseEntity<UserResponse> getUserByEmail(@RequestParam("email") String email) {
+    public ResponseEntity<UserResponse> getUserByEmail(@Valid @RequestParam("email") String email) {
         UserResponse user = userHandler.getUserByEmail(email);
         return ResponseEntity.ok(user);
     }
@@ -292,7 +293,7 @@ public class UserRestController {
     )
     @PreAuthorize("hasAnyRole('ADMIN', 'PROPIETARIO', 'EMPLEADO', 'CLIENTE')")
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> getUserById(@PathVariable("id") Long id) {
+    public ResponseEntity<UserResponse> getUserById(@Valid @PathVariable("id") Long id) {
         UserResponse user = userHandler.getUserById(id);
         return ResponseEntity.ok(user);
     }
@@ -363,7 +364,7 @@ public class UserRestController {
     )
     @PreAuthorize("hasAnyRole('ADMIN', 'PROPIETARIO', 'EMPLEADO', 'CLIENTE')")
     @GetMapping("/user/auth/{id}")
-    public ResponseEntity<UserAuthResponse> getUserByIdAuth(@PathVariable("id") Long id) {
+    public ResponseEntity<UserAuthResponse> getUserByIdAuth(@Valid @PathVariable("id") Long id) {
         UserAuthResponse user = userHandler.getUserByIdAuth(id);
         return ResponseEntity.ok(user);
     }

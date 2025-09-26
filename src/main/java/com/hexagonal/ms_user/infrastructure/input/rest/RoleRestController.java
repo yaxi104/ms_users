@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -83,7 +84,7 @@ public class RoleRestController {
     )
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/foodcourt")
-    public ResponseEntity<Void> saveRole(@RequestBody RoleRequest roleRequest) {
+    public ResponseEntity<Void> saveRole(@Valid @RequestBody RoleRequest roleRequest) {
         roleHandler.saveRole(roleRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
